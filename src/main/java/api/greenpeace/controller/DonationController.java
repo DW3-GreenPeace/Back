@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/donations")
+@CrossOrigin("*")
 public class DonationController {
     private final DonationService service;
 

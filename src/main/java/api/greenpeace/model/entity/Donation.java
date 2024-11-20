@@ -2,6 +2,7 @@ package api.greenpeace.model.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Document(collection = "donations")
 public class Donation {

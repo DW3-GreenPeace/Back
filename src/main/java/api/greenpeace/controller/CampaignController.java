@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/campaigns")
+@CrossOrigin("*")
 public class CampaignController {
     private final CampaignService service;
 

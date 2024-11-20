@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/volunteers")
+@CrossOrigin("*")
 public class VolunteerController {
     private final api.greenpeace.service.VolunteerService service;
 
