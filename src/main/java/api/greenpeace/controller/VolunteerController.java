@@ -61,11 +61,19 @@ public class VolunteerController {
         }
 
         // Atualizando os campos restantes
+        Volunteer existingVolunteerName = service.findByName(existingVolunteer.getName());
+        
+        if (existingVolunteerName != null) {
+            return ResponseEntity.status(403)
+                .body(new WrapperResponseDTO<>(false, "Volunteer with this name already exists", null));
+        }
+        
         existingVolunteer.setName(updatedVolunteer.getName());
         existingVolunteer.setCpf(updatedVolunteer.getCpf());
         existingVolunteer.setRg(updatedVolunteer.getRg());
         existingVolunteer.setEndereco(updatedVolunteer.getEndereco());
-        existingVolunteer.setAge(updatedVolunteer.getAge());
+        existingVolunteer.setBirth(updatedVolunteer.getBirth());
+        existingVolunteer.setPhone(updatedVolunteer.getPhone());
         existingVolunteer.setEmail(updatedVolunteer.getEmail());
         existingVolunteer.setSkills(updatedVolunteer.getSkills());
 

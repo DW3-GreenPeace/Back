@@ -27,7 +27,7 @@ public class FileImageService {
 	        if (fileType == null) return new UploadDTO("The image was not sended", false);
 	        
 	        if (!fileType.equals("image/jpeg") && !fileType.equals("image/png")) {
-	            return new UploadDTO("The image format is invalid. Send .jpg, .png, .jpeg instead", false);
+	            return new UploadDTO("The image format is invalid send .jpg, .png, .jpeg instead", false);
 	        }
 	   
 	        String uniqueId = UUID.randomUUID().toString();
