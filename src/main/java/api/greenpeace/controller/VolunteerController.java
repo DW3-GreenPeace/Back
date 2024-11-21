@@ -53,6 +53,7 @@ public class VolunteerController {
         @PathVariable String id,
         @RequestBody Volunteer updatedVolunteer
     ) {
+        // Busca o voluntário existente pelo ID
         Volunteer existingVolunteer = service.findById(id);
 
         if (existingVolunteer == null) {
@@ -60,14 +61,16 @@ public class VolunteerController {
                 .body(new WrapperResponseDTO<>(false, "Volunteer not found", null));
         }
 
-        // Atualizando os campos restantes
-        Volunteer existingVolunteerName = service.findByName(existingVolunteer.getName());
-        
-        if (existingVolunteerName != null) {
+        // Busca um voluntário pelo nome
+        Volunteer existingVolunteerByName = service.findByName(updatedVolunteer.getName());
+
+        // Verifica se já existe um voluntário com o mesmo nome e ID diferente
+        if (existingVolunteerByName != null && !existingVolunteerByName.getId().equals(existingVolunteer.getId())) {
             return ResponseEntity.status(403)
                 .body(new WrapperResponseDTO<>(false, "Volunteer with this name already exists", null));
         }
-        
+
+        // Atualiza os campos do voluntário
         existingVolunteer.setName(updatedVolunteer.getName());
         existingVolunteer.setCpf(updatedVolunteer.getCpf());
         existingVolunteer.setRg(updatedVolunteer.getRg());
@@ -77,6 +80,7 @@ public class VolunteerController {
         existingVolunteer.setEmail(updatedVolunteer.getEmail());
         existingVolunteer.setSkills(updatedVolunteer.getSkills());
 
+        // Salva as mudanças
         Volunteer savedVolunteer = service.save(existingVolunteer);
 
         return ResponseEntity.ok().body(
