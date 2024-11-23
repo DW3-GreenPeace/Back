@@ -8,5 +8,6 @@ import api.greenpeace.model.entity.Volunteer;
 public interface VolunteerRepository extends MongoRepository<Volunteer, String> {
 	
 	public Volunteer findByName(String name);
+	public Volunteer findByEmail(String name);
 	
 }

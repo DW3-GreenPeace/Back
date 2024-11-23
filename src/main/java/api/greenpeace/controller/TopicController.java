@@ -45,6 +45,7 @@ public class TopicController {
             @RequestParam(value = "image", required = false) MultipartFile newImage) {
 
         Topic updatedTopic = topicService.updateTopic(id, newText, newTitle, newImage);
+        
         WrapperResponseDTO<Topic> response = new WrapperResponseDTO<>(
                 true, "Topic updated successfully.", updatedTopic);
         return ResponseEntity.ok(response);

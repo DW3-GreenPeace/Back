@@ -18,10 +18,11 @@ public class Volunteer {
     private Date birth;
     private String email;
     private String phone;
+    private String password;
     private List<String> skills;
     
 	public Volunteer(String id, String name, String cpf, String rg, String endereco, Date birth, String email,
-			String phone, List<String> skills) {
+			String phone, String password, List<String> skills) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -31,6 +32,7 @@ public class Volunteer {
 		this.birth = birth;
 		this.email = email;
 		this.phone = phone;
+		this.password = password;
 		this.skills = skills;
 	}
 	
@@ -82,12 +84,20 @@ public class Volunteer {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public List<String> getSkills() {
 		return skills;
 	}
 	public void setSkills(List<String> skills) {
 		this.skills = skills;
 	}
+    
+    
     
 	
     
