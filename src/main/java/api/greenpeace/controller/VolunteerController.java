@@ -2,8 +2,10 @@ package api.greenpeace.controller;
 
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import api.greenpeace.dto.response.AuthResponseDTO;
 import api.greenpeace.dto.response.WrapperResponseDTO;
 import api.greenpeace.model.entity.Volunteer;
 import api.greenpeace.service.VolunteerService;
@@ -15,16 +17,43 @@ import java.util.Optional;
 @RequestMapping("/api/volunteers")
 @CrossOrigin("*")
 public class VolunteerController {
+	
     private final api.greenpeace.service.VolunteerService service;
+	private PasswordEncoder passwordEncoder;
 
-    public VolunteerController(VolunteerService service) {
+    public VolunteerController(VolunteerService service, PasswordEncoder passwordEncoder) {
         this.service = service;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
-    public ResponseEntity<WrapperResponseDTO<List<Volunteer>>> getAllVolunteers() {
+    public ResponseEntity<WrapperResponseDTO<List<AuthResponseDTO>>> getAllVolunteers() {
+        // Recupera todos os voluntários do serviço
         List<Volunteer> volunteers = service.findAll();
-        return ResponseEntity.ok(new WrapperResponseDTO<>(true, "Volunteers retrieved successfully", volunteers));
+
+        // Mapeia os voluntários para AuthResponseDTO
+        List<AuthResponseDTO> volunteerDTOs = volunteers.stream().map(volunteer -> 
+            new AuthResponseDTO(
+                volunteer.getId(),
+                volunteer.getName(),
+                volunteer.getCpf(),
+                volunteer.getRg(),
+                volunteer.getEndereco(),
+                volunteer.getBirth(),
+                volunteer.getEmail(),
+                volunteer.getPhone(),
+                volunteer.getSkills()
+            )
+        ).toList();
+
+        // Retorna a lista de AuthResponseDTOs encapsulada em WrapperResponseDTO
+        return ResponseEntity.ok(
+            new WrapperResponseDTO<>(
+                true, 
+                "Volunteers retrieved successfully", 
+                volunteerDTOs
+            )
+        );
     }
 
     @GetMapping("/{id}")
@@ -38,14 +67,29 @@ public class VolunteerController {
     }
 
     @PostMapping
-    public ResponseEntity<WrapperResponseDTO<Volunteer>> createVolunteer(@RequestBody Volunteer volunteer) {
+    public ResponseEntity<WrapperResponseDTO<AuthResponseDTO>> createVolunteer(@RequestBody Volunteer volunteer) {
     	
     	Volunteer volunteerExist = service.findByName(volunteer.getName());
     	
     	if(volunteerExist != null) return ResponseEntity.status(403).body(new WrapperResponseDTO<>(false, "Volunteer already exists", null));
     	
+    	volunteer.setPassword(passwordEncoder.encode(volunteer.getPassword()));
+    	
         Volunteer savedVolunteer = service.save(volunteer);
-        return ResponseEntity.ok(new WrapperResponseDTO<>(true, "Volunteer created successfully", savedVolunteer));
+        
+        AuthResponseDTO registeredData = new AuthResponseDTO(
+            savedVolunteer.getId(),
+            savedVolunteer.getName(),
+            savedVolunteer.getCpf(),
+            savedVolunteer.getRg(),
+            savedVolunteer.getEndereco(),
+            savedVolunteer.getBirth(),
+            savedVolunteer.getEmail(),
+            savedVolunteer.getPhone(),
+            savedVolunteer.getSkills()
+        );
+        
+        return ResponseEntity.ok(new WrapperResponseDTO<>(true, "Volunteer created successfully", registeredData));
     }
     
     @PutMapping("/{id}")

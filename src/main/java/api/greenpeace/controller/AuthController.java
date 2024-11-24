@@ -33,33 +33,48 @@ public class AuthController {
 	
 	@PostMapping(value = { "", "/" })
 	public WrapperResponseDTO<AuthResponseDTO> login(@RequestBody AuthRequestDTO login) {
+		
+	    if (login.getEmail() == null || login.getPassword() == null) {
+	        return new WrapperResponseDTO<>(
+	            false,
+	            "Email and password are required.",
+	            null
+	        );
+	    }
+
 	    Volunteer volunteerFound = this.repo.findByEmail(login.getEmail());
 
 	    if (volunteerFound != null) {
-	    	
-	        if (passwordEncoder.matches(login.getSenha(), volunteerFound.getPassword())) {
-	        	
-	            AuthResponseDTO loginData = new AuthResponseDTO(
-	                volunteerFound.getId(),
-	                volunteerFound.getName(),
-	                volunteerFound.getCpf(),
-	                volunteerFound.getRg(),
-	                volunteerFound.getEndereco(),
-	                volunteerFound.getBirth(),
-	                volunteerFound.getEmail(),
-	                volunteerFound.getPhone(),
-	                volunteerFound.getSkills()
-	            );
+	        try {
+	            if (passwordEncoder.matches(login.getPassword(), volunteerFound.getPassword())) {
+	                AuthResponseDTO loginData = new AuthResponseDTO(
+	                    volunteerFound.getId(),
+	                    volunteerFound.getName(),
+	                    volunteerFound.getCpf(),
+	                    volunteerFound.getRg(),
+	                    volunteerFound.getEndereco(),
+	                    volunteerFound.getBirth(),
+	                    volunteerFound.getEmail(),
+	                    volunteerFound.getPhone(),
+	                    volunteerFound.getSkills()
+	                );
 
-	            return new WrapperResponseDTO<>(
-	                true,
-	                "Autenticado em " + (new Date()).getTime(),
-	                loginData
-	            );
-	        } else {
+	                return new WrapperResponseDTO<>(
+	                    true,
+	                    "Autenticado em " + (new Date()).getTime(),
+	                    loginData
+	                );
+	            } else {
+	                return new WrapperResponseDTO<>(
+	                    false,
+	                    "Senha inválida.",
+	                    null
+	                );
+	            }
+	        } catch (IllegalArgumentException e) {
 	            return new WrapperResponseDTO<>(
 	                false,
-	                "Senha inválida.",
+	                "An error occurred during authentication: " + e.getMessage(),
 	                null
 	            );
 	        }
